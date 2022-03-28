@@ -3,14 +3,20 @@ package main
 import (
 	"net/http"
 	"strings"
+	"time"
 
+	cache "github.com/chenyahui/gin-cache"
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
 
-	router.GET("/sort", sortCards)
+	memoryStore := persist.NewMemoryStore(1 * time.Minute)
+
+	cacheHandler := cache.CacheByRequestURI(memoryStore, 2*time.Second)
+	router.GET("/sort", cacheHandler, sortCards)
 
 	router.Run("localhost:8080")
 }
