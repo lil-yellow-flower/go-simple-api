@@ -29,5 +29,54 @@ func validator(input string) []string {
 }
 
 func sorter(input []string) []string {
-	return input
+	var resultString []string
+
+	dict := make(map[string]string)
+	from := make(map[string]bool)
+	to := make(map[string]bool)
+
+	// separate
+	for _, val := range input {
+		pair := strings.Split(val, "-")
+		f := pair[0]
+		t := pair[1]
+
+		from[f] = true
+		to[t] = true
+
+		dict[f] = t
+	}
+
+	// get starting point
+	currentCard := struct {
+		from string
+		to   string
+	}{
+		from: "",
+		to:   "",
+	}
+
+	for f, _ := range from {
+		if to[f] == false {
+			currentCard.from = f
+			currentCard.to = dict[f]
+			break
+		}
+	}
+	resultString = append(resultString, currentCard.from+"-"+currentCard.to)
+
+	// get rest and final destination
+	for true {
+		nextCardFrom := dict[currentCard.to]
+		if nextCardFrom == "" {
+			break
+		}
+
+		currentCard.from = currentCard.to
+		currentCard.to = nextCardFrom
+
+		resultString = append(resultString, currentCard.from+"-"+currentCard.to)
+	}
+
+	return resultString
 }
