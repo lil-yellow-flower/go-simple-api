@@ -10,14 +10,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	router := gin.Default()
+func setupRouter() *gin.Engine {
+	r := gin.Default()
 
 	memoryStore := persist.NewMemoryStore(1 * time.Minute)
-
 	cacheHandler := cache.CacheByRequestURI(memoryStore, 2*time.Second)
-	router.GET("/sort", cacheHandler, sortCards)
 
+	r.GET("/sort", cacheHandler, sortCards)
+
+	return r
+}
+
+func main() {
+	router := setupRouter()
 	router.Run("localhost:8080")
 }
 
