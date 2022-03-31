@@ -1,9 +1,26 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+func TestSortCardsRoute_ReturnOk(t *testing.T) {
+	router := setupRouter()
+
+	responseRecorder := httptest.NewRecorder()
+
+	query := "/sort?cards=HEL-GOT,GOT-ARL,CPH-HEL"
+	request, _ := http.NewRequest("GET", query, nil)
+
+	router.ServeHTTP(responseRecorder, request)
+
+	assert.Equal(t, 200, responseRecorder.Code)
+}
 
 func TestSorterSmall(t *testing.T) {
 	testCase := []string{"HEL-GOT", "GOT-ARL", "CPH-HEL"}
